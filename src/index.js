@@ -5,6 +5,10 @@ const exphbs  = require('express-handlebars');
 const app = express();
 const port = 8080;
 
+app.use(express.static(path.join(__dirname, 'public')))
+
+console.log(path.join(__dirname, 'public'))
+
 // HTTP logger
 app.use(morgan('dev'));
 
