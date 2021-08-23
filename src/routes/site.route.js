@@ -9,4 +9,4 @@ router.use('/search', NewsController.search);
 // [GET] /home
 router.use('/', NewsController.home);
 
-module.exports = router
+module.exports = router;

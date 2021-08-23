@@ -9,4 +9,4 @@ router.use('/:slug', NewsController.show);
 // [GET] /news
 router.use('/', NewsController.index);
 
-module.exports = router
+module.exports = router;
