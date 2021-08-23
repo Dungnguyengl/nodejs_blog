@@ -29,7 +29,7 @@
   },
   "husky": {
     "hooks":{
-      "pre-commit": "npm run beauty"
+      "pre-commit": "npm lint-staged"
     }
   },
   "lint-staged": {
