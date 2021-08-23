@@ -33,11 +33,11 @@ app.engine(
 );
 
     app.set('views', path.join(__dirname, 'resources\\view'));
-app.set('view engine', 'hbs');
+    app.set('view engine', 'hbs');
 
 // route init
 route(app);
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+        console.log(`Example app listening at http://localhost:${port}`);
 });
