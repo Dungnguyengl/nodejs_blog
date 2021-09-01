@@ -1,6 +1,16 @@
 @import 'variables';
 
-.test {
-    font-size: 1rem;
-    background-color: $red-color;
+.col-card{
+    padding: 16px 0;
+}
+
+.right-btn{ 
+    width: fit-content;
+    margin-left: auto;
+    padding-right: .75rem;
+}
+
+.select-all-options{
+    width: 12rem;
+    margin: 0 .25rem;
 }

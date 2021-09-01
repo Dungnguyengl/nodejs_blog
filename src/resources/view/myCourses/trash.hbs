@@ -1,0 +1,175 @@
+<form name="container-form" action="handleform" method="POST">
+  <div>
+    <h3>Trash Courses</h3>
+    <a class="btn btn-secondary" href="/mycourses">Back</a>
+    <div class="mt-4 d-flex align-items-center">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id="selectAllCheckbox"
+          value="all"
+        >
+        <label
+          class="form-check-label"
+          for="selectAllCheckbox"
+        >Select All
+        </label>
+  
+        <select class="form-control form-control-sm select-all-options" name="action" required>
+          <option value="">-- Select action --</option>
+          <option value="restore">Restore</option>
+          <option value="destroy">Delete</option>
+        </select>
+  
+      <button
+        id="btn-submit-checked"
+        class="btn btn-primary btn-sm"
+        >Submit
+        </button>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Video ID</th>
+        <th scope="col" colspan="3">Time Delete</th>
+      </tr>
+    </thead>
+    {{#each courses}}
+      <tbody>
+        <tr>
+          <td>
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="selectAllCheckbox"
+              value="{{this._id}}"
+              name="courseIds[]"
+            >
+          </td>
+          <th scope="row">{{setIndex @index}}</th>
+          <td>{{this.name}}</td>
+          <td>{{this.description}}</td>
+          <td>{{this.vID}}</td>
+          <td>{{this.deletedAt}}</td>
+          <td>
+            <a
+              href="mycourses/{{this._id}}/restore"
+              class="btn btn-info"
+            >Restore</a>
+          </td>
+          <td>
+            <a
+              href="#"
+              class="btn btn-danger"
+              data-toggle="modal"
+              data-target="#delete-modal"
+              data-id="{{this._id}}"
+              data-name="{{this.name}}"
+            >Delete</a>
+          </td>
+        </tr>
+      </tbody>
+    {{else}}
+      <div>
+          <span class="text-center mx-auto">
+              No Trash
+          </span>
+      </div>
+    {{/each}}
+  </table>
+</form>
+
+<div id="delete-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Courses</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button id="btn-delete" class="btn btn-danger">Delete</button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{! destroy hidden form }}
+<form name="delete-form" method="POST"></form>
+{{! Restore hidden form }}
+<form name="restore-form" method="POST"></form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() { 
+        let courseID; 
+        let courseName; 
+        let deleteForm = document.forms['delete-form'];
+        let restoreForm = document.forms['restore-form'];
+        let btnDelete = document.getElementById('btn-delete');
+        let restoreBtn = $('.btn-restore-courses');
+        let checkboxAll = $('#selectAllCheckbox');
+        let checkboxItems = $('input[name="courseIds[]"]');
+        let btnSubmitChecked = $('#btn-submit-checked');
+        
+        $('#delete-modal').on('show.bs.modal', function (event) { 
+            let button = $(event.relatedTarget); 
+            let modalBody = $('.modal-body');
+            courseID = button.data('id'); 
+            courseName = button.data('name'); 
+            modalBody.html(`<p>Are you sure delete ${courseName}.</p>`)
+        }) 
+
+        btnDelete.onclick = e => { 
+            deleteForm.action = `/mycourses/${courseID}/destroy?_method=DELETE`; 
+            deleteForm.submit(); 
+        } 
+
+        restoreBtn.click(function (e) {
+            let courseId = $(this).data('id');
+            restoreForm.action = `/mycourses/${courseId}/restore?_method=PATCH`; 
+            restoreForm.submit();
+        })
+
+        checkboxAll.change(function () {
+            let isCheckedAll = $(this).prop('checked');
+            checkboxItems.prop('checked', isCheckedAll);
+            renderBtnSubmit();
+        })
+
+        checkboxItems.change(function () {
+            let isCheckedAll = checkboxItems.length === $('input[name="courseIds[]"]:checked').length;
+            checkboxAll.prop('checked', isCheckedAll);
+            renderBtnSubmit();
+        })
+
+        function renderBtnSubmit() {
+            let countChecked = $('input[name="courseIds[]"]:checked').length;
+                if (countChecked){
+                    btnSubmitChecked.removeClass('disabled');
+                }
+                else{
+                    btnSubmitChecked.addClass('disabled');
+                }
+                btnSubmitChecked.attr('disabled', !countChecked);
+        }
+
+        renderBtnSubmit();
+    })
+</script>
