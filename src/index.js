@@ -9,6 +9,8 @@ const port = 8080;
 const route = require('./routes');
 const db = require('./config/db');
 
+const sortMiddleware = require('./app/middleware/sortMiddleware');
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
@@ -20,6 +22,8 @@ app.use(
 app.use(express.json());
 
 app.use(methodOverride('_method'));
+
+app.use(sortMiddleware);
 
 console.log(path.join(__dirname, 'public'));
 
@@ -36,6 +40,27 @@ app.engine(
         helpers:{
             sum: (a, b) => a + b,
             setIndex: a => a + 1,
+            sortable: (column, sort) => {
+                const sortType = column === sort.column ? sort.type : 'default';
+                const icons = {
+                    default: "oi oi-elevator",
+                    asc: 'oi oi-caret-bottom',
+                    desc: 'oi oi-caret-top',
+                }
+                const types = {
+                    default: 'asc',
+                    asc: 'desc',
+                    desc: 'asc',
+                }
+
+                const icon = icons[sortType];
+                const type = types[sortType];
+
+                return `
+                <a href="?_sort&column=${column}&type=${type}">
+                    <span class="${icon}"></span>
+                </a>`
+            },
         }
     }),
 );
